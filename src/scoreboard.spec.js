@@ -11,11 +11,11 @@ describe('Scoreboard', () => {
     clearScoreboard();
   });
 
-  describe('Starting a match', () => {
-    it('should be an empty when any matches are started', () => {
-      expect(scoreboard.size).toEqual(0);
-    });
+  it('should be an empty when any matches are started', () => {
+    expect(scoreboard.size).toEqual(0);
+  });
 
+  describe('Starting a match', () => {
     // Happy Path
     it('should start a new match', () => {
       const match = startMatch('AA', 'BB');
@@ -50,6 +50,7 @@ describe('Scoreboard', () => {
   });
 
   describe('Updating a match', () => {
+    // Happy path
     it('should can update match score', () => {
       const match = startMatch('AA', 'BB');
       updateMatchScore(match.id, { home: 2, away: 1 });
@@ -86,10 +87,18 @@ describe('Scoreboard', () => {
   });
 
   describe('Finished a match', () => {
+    // Happy path
     it('should can finish the match', () => {
       const match = startMatch('AA', 'BB');
       finishMatch(match.id);
       expect(match.state).toEqual('completed');
+    });
+
+    it('should remove finished match the scoreboard', () => {
+      const match = startMatch('AA', 'BB');
+      expect(scoreboard.has(match.id)).toEqual(true);
+      finishMatch(match.id);
+      expect(scoreboard.has(match.id)).toEqual(false);
     });
 
     it('should throw an error when try to finished match which is not in progress', () => {
