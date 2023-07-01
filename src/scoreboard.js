@@ -26,11 +26,15 @@ function checkAreTheSameTeams(homeName, awayName) {
 function createMatch(homeName, awayName) {
   return {
     id: uuid.v4(),
-    type: 'match',
     state: 'created',
+    startTime: Date.now(),
     home: { name: homeName, score: 0 },
     away: { name: awayName, score: 0 },
   };
+}
+
+function getTotalScore(match) {
+  return match.home.score + match.away.score;
 }
 
 function startMatch(homeName, awayName) {
@@ -76,10 +80,24 @@ function finishMatch(matchId) {
   return match;
 }
 
+function getReport() {
+  const report = [...scoreboard.values()];
+  report.sort((matchA, matchB) => {
+    const totalComparator = getTotalScore(matchB) - getTotalScore(matchA);
+    if (totalComparator === 0) {
+      return matchA.startTime - matchB.startTime;
+    }
+    return totalComparator;
+  });
+  return report;
+}
+
 module.exports = {
   scoreboard,
+  createMatch,
   clearScoreboard,
   startMatch,
   updateMatchScore,
   finishMatch,
+  getReport,
 };

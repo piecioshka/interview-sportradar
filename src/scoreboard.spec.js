@@ -4,6 +4,8 @@ const {
   startMatch,
   updateMatchScore,
   finishMatch,
+  getReport,
+  createMatch,
 } = require('./scoreboard');
 
 describe('Scoreboard', () => {
@@ -21,8 +23,8 @@ describe('Scoreboard', () => {
       const match = startMatch('AA', 'BB');
       expect(match).toEqual({
         id: expect.any(String),
-        type: 'match',
         state: 'in-progress',
+        startTime: expect.any(Number),
         home: { name: 'AA', score: 0 },
         away: { name: 'BB', score: 0 },
       });
@@ -56,8 +58,8 @@ describe('Scoreboard', () => {
       updateMatchScore(match.id, { home: 2, away: 1 });
       expect(match).toEqual({
         id: expect.any(String),
-        type: 'match',
         state: 'in-progress',
+        startTime: expect.any(Number),
         home: { name: 'AA', score: 2 },
         away: { name: 'BB', score: 1 },
       });
@@ -110,6 +112,124 @@ describe('Scoreboard', () => {
       } catch (err) {
         expect(err).toBeDefined();
       }
+    });
+  });
+
+  describe('Report', () => {
+    it('should return empty when scoreboard is empty', () => {
+      const report = getReport();
+      expect(report.length).toEqual(0);
+    });
+
+    it('should return one match when its only one item on scoreboard', () => {
+      startMatch('AA', 'BB');
+      const report = getReport();
+      expect(report).toEqual([
+        {
+          ...createMatch('AA', 'BB'),
+          id: expect.any(String),
+          state: 'in-progress',
+          startTime: expect.any(Number),
+        },
+      ]);
+    });
+
+    it('should return a list in order of started when score is the same', () => {
+      startMatch('AA', 'BB');
+      startMatch('CC', 'DD');
+      const report = getReport();
+      expect(report).toEqual([
+        {
+          ...createMatch('AA', 'BB'),
+          id: expect.any(String),
+          state: 'in-progress',
+          startTime: expect.any(Number),
+        },
+        {
+          ...createMatch('CC', 'DD'),
+          id: expect.any(String),
+          state: 'in-progress',
+          startTime: expect.any(Number),
+        },
+      ]);
+    });
+
+    it('should return a ordered list by total score', () => {
+      startMatch('AA', 'BB');
+      const match2 = startMatch('CC', 'DD');
+      updateMatchScore(match2.id, { home: 1, away: 0 });
+      const report = getReport();
+      expect(report).toEqual([
+        {
+          id: expect.any(String),
+          state: 'in-progress',
+          startTime: expect.any(Number),
+          home: { name: 'CC', score: 1 },
+          away: { name: 'DD', score: 0 },
+        },
+        {
+          ...createMatch('AA', 'BB'),
+          id: expect.any(String),
+          state: 'in-progress',
+          startTime: expect.any(Number),
+        },
+      ]);
+    });
+
+    it('should return a ordered list by total score and rest in order of starting', () => {
+      updateMatchScore(startMatch('Mexico', 'Canada').id, { home: 0, away: 5 });
+      updateMatchScore(startMatch('Spain', 'Brazil').id, { home: 10, away: 2 });
+      updateMatchScore(startMatch('Germany', 'France').id, {
+        home: 2,
+        away: 2,
+      });
+      updateMatchScore(startMatch('Uruguay', 'Italy').id, { home: 6, away: 6 });
+      updateMatchScore(startMatch('Argentina', 'Australia').id, {
+        home: 3,
+        away: 1,
+      });
+
+      const report = getReport();
+
+      console.log(report);
+
+      expect(report).toEqual([
+        {
+          id: expect.any(String),
+          state: 'in-progress',
+          startTime: expect.any(Number),
+          home: { name: 'Uruguay', score: 6 },
+          away: { name: 'Italy', score: 6 },
+        },
+        {
+          id: expect.any(String),
+          state: 'in-progress',
+          startTime: expect.any(Number),
+          home: { name: 'Spain', score: 10 },
+          away: { name: 'Brazil', score: 2 },
+        },
+        {
+          id: expect.any(String),
+          state: 'in-progress',
+          startTime: expect.any(Number),
+          home: { name: 'Mexico', score: 0 },
+          away: { name: 'Canada', score: 5 },
+        },
+        {
+          id: expect.any(String),
+          state: 'in-progress',
+          startTime: expect.any(Number),
+          home: { name: 'Argentina', score: 3 },
+          away: { name: 'Australia', score: 1 },
+        },
+        {
+          id: expect.any(String),
+          state: 'in-progress',
+          startTime: expect.any(Number),
+          home: { name: 'Germany', score: 2 },
+          away: { name: 'France', score: 2 },
+        },
+      ]);
     });
   });
 });
