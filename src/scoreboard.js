@@ -1,9 +1,11 @@
-const scoreboard = [];
+const uuid = require('uuid');
+
+const scoreboard = new Map();
 // For performance reason
 const currentPlayedTeams = new Set();
 
 function clearScoreboard() {
-  scoreboard.length = 0;
+  scoreboard.clear();
   currentPlayedTeams.clear();
 }
 
@@ -21,22 +23,47 @@ function checkAreTheSameTeams(homeName, awayName) {
   }
 }
 
+function createMatch(homeName, awayName) {
+  return {
+    id: uuid.v4(),
+    type: 'match',
+    state: 'created',
+    home: { name: homeName, score: 0 },
+    away: { name: awayName, score: 0 },
+  };
+}
+
 function startMatch(homeName, awayName) {
   checkAreTeamsPlayedNow(homeName, awayName);
   checkAreTheSameTeams(homeName, awayName);
 
-  const home = { name: homeName, score: 0 };
-  const away = { name: awayName, score: 0 };
+  const match = createMatch(homeName, awayName);
+  match.state = 'in-progress';
 
-  scoreboard.push({ type: 'match', home, away });
+  scoreboard.set(match.id, match);
   currentPlayedTeams.add(homeName);
   currentPlayedTeams.add(awayName);
 
-  return { home, away };
+  return match;
+}
+
+function checkIfScoreIsLower(currentScore, newScore) {
+  if (currentScore > newScore) {
+    throw new Error('Cannot set score which is lower than current');
+  }
+}
+
+function updateMatchScore(matchId, matchScore) {
+  const match = scoreboard.get(matchId);
+  checkIfScoreIsLower(match.home.score, matchScore.home);
+  checkIfScoreIsLower(match.away.score, matchScore.away);
+  match.home.score = matchScore.home;
+  match.away.score = matchScore.away;
 }
 
 module.exports = {
   scoreboard,
   clearScoreboard,
   startMatch,
+  updateMatchScore,
 };
