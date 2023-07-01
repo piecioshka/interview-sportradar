@@ -53,12 +53,27 @@ function checkIfScoreIsLower(currentScore, newScore) {
   }
 }
 
-function updateMatchScore(matchId, matchScore) {
+function getMatch(matchId) {
   const match = scoreboard.get(matchId);
+  if (!match) {
+    throw new Error(`Match with id="${matchId}" is not available`);
+  }
+  return match;
+}
+
+function updateMatchScore(matchId, matchScore) {
+  const match = getMatch(matchId);
   checkIfScoreIsLower(match.home.score, matchScore.home);
   checkIfScoreIsLower(match.away.score, matchScore.away);
   match.home.score = matchScore.home;
   match.away.score = matchScore.away;
+}
+
+function finishMatch(matchId) {
+  const match = getMatch(matchId);
+  match.state = 'completed';
+  scoreboard.delete(matchId);
+  return match;
 }
 
 module.exports = {
@@ -66,4 +81,5 @@ module.exports = {
   clearScoreboard,
   startMatch,
   updateMatchScore,
+  finishMatch,
 };

@@ -3,6 +3,7 @@ const {
   clearScoreboard,
   startMatch,
   updateMatchScore,
+  finishMatch,
 } = require('./scoreboard');
 
 describe('Scoreboard', () => {
@@ -67,6 +68,36 @@ describe('Scoreboard', () => {
       updateMatchScore(match.id, { home: 2, away: 1 });
       try {
         updateMatchScore(match.id, { home: 1, away: 1 });
+      } catch (err) {
+        expect(err).toBeDefined();
+      }
+    });
+
+    it('should throw an error when update match is not in progress', () => {
+      expect.assertions(1);
+      const match = startMatch('AA', 'BB');
+      finishMatch(match.id);
+      try {
+        updateMatchScore(match.id, { home: 1, away: 0 });
+      } catch (err) {
+        expect(err).toBeDefined();
+      }
+    });
+  });
+
+  describe('Finished a match', () => {
+    it('should can finish the match', () => {
+      const match = startMatch('AA', 'BB');
+      finishMatch(match.id);
+      expect(match.state).toEqual('completed');
+    });
+
+    it('should throw an error when try to finished match which is not in progress', () => {
+      expect.assertions(1);
+      const match = startMatch('AA', 'BB');
+      finishMatch(match.id);
+      try {
+        finishMatch(match.id);
       } catch (err) {
         expect(err).toBeDefined();
       }

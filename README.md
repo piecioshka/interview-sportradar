@@ -7,6 +7,7 @@
 * Match has states:
   - created - is created but not player
   - in-progress - playing now
+  - completed - finishing a competition
 
 ## Edge Cases
 
