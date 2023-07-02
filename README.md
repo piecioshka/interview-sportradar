@@ -18,3 +18,16 @@
 ## Relations
 
 ![](docs/relations.png)
+
+## Development
+
+```bash
+# setup application
+npm install
+
+# run unit tests
+npm run test
+
+# run unit tests and generate coverage
+npm run coverage
+```
