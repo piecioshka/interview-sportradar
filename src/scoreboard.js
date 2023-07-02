@@ -1,75 +1,81 @@
 const { Match } = require('./match');
 
-const scoreboard = new Map();
-// For performance reason
-const currentPlayedTeams = new Set();
+class Scoreboard {
+  _scoreboard = new Map();
+  // For performance reason
+  _currentPlayedTeams = new Set();
 
-function clearScoreboard() {
-  scoreboard.clear();
-  currentPlayedTeams.clear();
-}
+  clearScoreboard() {
+    this._scoreboard.clear();
+    this._currentPlayedTeams.clear();
+  }
 
-function checkAreTeamsPlayedNow(...teams) {
-  teams.forEach((team) => {
-    if (currentPlayedTeams.has(team)) {
-      throw new Error(`Team "${team}" played now`);
+  checkAreTeamsPlayedNow(...teams) {
+    teams.forEach((team) => {
+      if (this._currentPlayedTeams.has(team)) {
+        throw new Error(`Team "${team}" played now`);
+      }
+    });
+  }
+
+  checkAreTheSameTeams(homeName, awayName) {
+    if (homeName === awayName) {
+      throw new Error('The same teams cannot play to each other');
     }
-  });
-}
-
-function checkAreTheSameTeams(homeName, awayName) {
-  if (homeName === awayName) {
-    throw new Error('The same teams cannot play to each other');
   }
-}
 
-function startMatch(homeName, awayName) {
-  checkAreTeamsPlayedNow(homeName, awayName);
-  checkAreTheSameTeams(homeName, awayName);
+  startMatch(homeName, awayName) {
+    this.checkAreTeamsPlayedNow(homeName, awayName);
+    this.checkAreTheSameTeams(homeName, awayName);
 
-  const match = Match.createMatch(homeName, awayName);
-  match.state = 'in-progress';
+    const match = Match.createMatch(homeName, awayName);
+    match.state = 'in-progress';
 
-  scoreboard.set(match.id, match);
-  currentPlayedTeams.add(homeName);
-  currentPlayedTeams.add(awayName);
+    this._scoreboard.set(match.id, match);
+    this._currentPlayedTeams.add(homeName);
+    this._currentPlayedTeams.add(awayName);
 
-  return match;
-}
-
-function checkIfScoreIsLower(currentScore, newScore) {
-  if (currentScore > newScore) {
-    throw new Error('Cannot set score which is lower than current');
+    return match;
   }
-}
 
-function getMatch(matchId) {
-  const match = scoreboard.get(matchId);
-  if (!match) {
-    throw new Error(`Match with id="${matchId}" is not available`);
+  checkIfScoreIsLower(currentScore, newScore) {
+    if (currentScore > newScore) {
+      throw new Error('Cannot set score which is lower than current');
+    }
   }
-  return match;
-}
 
-function updateMatchScore(matchId, matchScore) {
-  const match = getMatch(matchId);
-  checkIfScoreIsLower(match.home.score, matchScore.home);
-  checkIfScoreIsLower(match.away.score, matchScore.away);
-  match.home.score = matchScore.home;
-  match.away.score = matchScore.away;
-}
+  getMatch(matchId) {
+    const match = this._scoreboard.get(matchId);
+    if (!match) {
+      throw new Error(`Match with id="${matchId}" is not available`);
+    }
+    return match;
+  }
 
-function finishMatch(matchId) {
-  const match = getMatch(matchId);
-  match.state = 'completed';
-  scoreboard.delete(matchId);
-  return match;
+  getMatches() {
+    return [...this._scoreboard.values()];
+  }
+
+  updateMatchScore(matchId, matchScore) {
+    const match = this.getMatch(matchId);
+    this.checkIfScoreIsLower(match.home.score, matchScore.home);
+    this.checkIfScoreIsLower(match.away.score, matchScore.away);
+    match.home.score = matchScore.home;
+    match.away.score = matchScore.away;
+  }
+
+  finishMatch(matchId) {
+    const match = this.getMatch(matchId);
+    match.state = 'completed';
+    this._scoreboard.delete(matchId);
+    return match;
+  }
+
+  has(matchId) {
+    return this._scoreboard.has(matchId);
+  }
 }
 
 module.exports = {
-  scoreboard,
-  clearScoreboard,
-  startMatch,
-  updateMatchScore,
-  finishMatch,
+  Scoreboard,
 };

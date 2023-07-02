@@ -1,15 +1,14 @@
 const { Match } = require('./match');
 const {
-  scoreboard,
-  startMatch,
-  updateMatchScore,
-  clearScoreboard,
+  Scoreboard
 } = require('./scoreboard');
 const { ScoreboardReport } = require('./scoreboard-report');
 
 describe('Report', () => {
+  let scoreboard;
+
   beforeEach(() => {
-    clearScoreboard();
+    scoreboard = new Scoreboard();
   });
 
   it('should return empty when scoreboard is empty', () => {
@@ -18,7 +17,7 @@ describe('Report', () => {
   });
 
   it('should return one match when its only one item on scoreboard', () => {
-    startMatch('AA', 'BB');
+    scoreboard.startMatch('AA', 'BB');
     const report = new ScoreboardReport(scoreboard).generate();
     expect(report).toEqual([
       {
@@ -30,8 +29,8 @@ describe('Report', () => {
   });
 
   it('should return a list in reversed order of started when score is the same', () => {
-    startMatch('AA', 'BB');
-    startMatch('CC', 'DD');
+    scoreboard.startMatch('AA', 'BB');
+    scoreboard.startMatch('CC', 'DD');
     const report = new ScoreboardReport(scoreboard).generate();
     expect(report).toEqual([
       {
@@ -48,9 +47,9 @@ describe('Report', () => {
   });
 
   it('should return a ordered list by total score', () => {
-    startMatch('AA', 'BB');
-    const match2 = startMatch('CC', 'DD');
-    updateMatchScore(match2.id, { home: 1, away: 0 });
+    scoreboard.startMatch('AA', 'BB');
+    const match2 = scoreboard.startMatch('CC', 'DD');
+    scoreboard.updateMatchScore(match2.id, { home: 1, away: 0 });
     const report = new ScoreboardReport(scoreboard).generate();
     expect(report).toEqual([
       {
@@ -68,14 +67,14 @@ describe('Report', () => {
   });
 
   it('should return a ordered list by total score and rest in order of starting', () => {
-    updateMatchScore(startMatch('Mexico', 'Canada').id, { home: 0, away: 5 });
-    updateMatchScore(startMatch('Spain', 'Brazil').id, { home: 10, away: 2 });
-    updateMatchScore(startMatch('Germany', 'France').id, {
+    scoreboard.updateMatchScore(scoreboard.startMatch('Mexico', 'Canada').id, { home: 0, away: 5 });
+    scoreboard.updateMatchScore(scoreboard.startMatch('Spain', 'Brazil').id, { home: 10, away: 2 });
+    scoreboard.updateMatchScore(scoreboard.startMatch('Germany', 'France').id, {
       home: 2,
       away: 2,
     });
-    updateMatchScore(startMatch('Uruguay', 'Italy').id, { home: 6, away: 6 });
-    updateMatchScore(startMatch('Argentina', 'Australia').id, {
+    scoreboard.updateMatchScore(scoreboard.startMatch('Uruguay', 'Italy').id, { home: 6, away: 6 });
+    scoreboard.updateMatchScore(scoreboard.startMatch('Argentina', 'Australia').id, {
       home: 3,
       away: 1,
     });

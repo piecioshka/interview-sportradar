@@ -4,7 +4,7 @@ class ScoreboardReport {
   }
 
   generate() {
-    const report = [...this.scoreboard.values()].reverse();
+    const report = this.scoreboard.getMatches().reverse();
     report.sort((matchA, matchB) => {
       return this._getTotalScore(matchB) - this._getTotalScore(matchA);
     });

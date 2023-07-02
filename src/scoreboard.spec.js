@@ -1,24 +1,20 @@
-const {
-  scoreboard,
-  clearScoreboard,
-  startMatch,
-  updateMatchScore,
-  finishMatch,
-} = require('./scoreboard');
+const { Scoreboard } = require('./scoreboard');
 
 describe('Scoreboard', () => {
+  let scoreboard;
+
   beforeEach(() => {
-    clearScoreboard();
+    scoreboard = new Scoreboard();
   });
 
   it('should be an empty when any matches are started', () => {
-    expect(scoreboard.size).toEqual(0);
+    expect(scoreboard.getMatches().length).toEqual(0);
   });
 
   describe('Starting a match', () => {
     // Happy Path
     it('should start a new match', () => {
-      const match = startMatch('AA', 'BB');
+      const match = scoreboard.startMatch('AA', 'BB');
       expect(match).toEqual({
         id: expect.any(String),
         state: 'in-progress',
@@ -30,9 +26,9 @@ describe('Scoreboard', () => {
 
     it('should throw an error when we try to start a new match when one of teams is played now', () => {
       expect.assertions(2);
-      startMatch('CC', 'DD');
+      scoreboard.startMatch('CC', 'DD');
       try {
-        startMatch('CC', 'EE');
+        scoreboard.startMatch('CC', 'EE');
       } catch (err) {
         expect(err).toBeDefined();
         expect(err.message).toContain('Team "CC"');
@@ -42,7 +38,7 @@ describe('Scoreboard', () => {
     it('should throw an error when team names are the same', () => {
       expect.assertions(1);
       try {
-        startMatch('FF', 'FF');
+        scoreboard.startMatch('FF', 'FF');
       } catch (err) {
         expect(err).toBeDefined();
       }
@@ -52,8 +48,8 @@ describe('Scoreboard', () => {
   describe('Updating a match', () => {
     // Happy path
     it('should can update match score', () => {
-      const match = startMatch('AA', 'BB');
-      updateMatchScore(match.id, { home: 2, away: 1 });
+      const match = scoreboard.startMatch('AA', 'BB');
+      scoreboard.updateMatchScore(match.id, { home: 2, away: 1 });
       expect(match).toEqual({
         id: expect.any(String),
         state: 'in-progress',
@@ -64,10 +60,10 @@ describe('Scoreboard', () => {
 
     it('should throw an error to update match score which has lower values (or less than zero)', () => {
       expect.assertions(1);
-      const match = startMatch('AA', 'BB');
-      updateMatchScore(match.id, { home: 2, away: 1 });
+      const match = scoreboard.startMatch('AA', 'BB');
+      scoreboard.updateMatchScore(match.id, { home: 2, away: 1 });
       try {
-        updateMatchScore(match.id, { home: 1, away: 1 });
+        scoreboard.updateMatchScore(match.id, { home: 1, away: 1 });
       } catch (err) {
         expect(err).toBeDefined();
       }
@@ -75,10 +71,10 @@ describe('Scoreboard', () => {
 
     it('should throw an error when update match is not in progress', () => {
       expect.assertions(1);
-      const match = startMatch('AA', 'BB');
-      finishMatch(match.id);
+      const match = scoreboard.startMatch('AA', 'BB');
+      scoreboard.finishMatch(match.id);
       try {
-        updateMatchScore(match.id, { home: 1, away: 0 });
+        scoreboard.updateMatchScore(match.id, { home: 1, away: 0 });
       } catch (err) {
         expect(err).toBeDefined();
       }
@@ -88,24 +84,24 @@ describe('Scoreboard', () => {
   describe('Finished a match', () => {
     // Happy path
     it('should can finish the match', () => {
-      const match = startMatch('AA', 'BB');
-      finishMatch(match.id);
+      const match = scoreboard.startMatch('AA', 'BB');
+      scoreboard.finishMatch(match.id);
       expect(match.state).toEqual('completed');
     });
 
     it('should remove finished match the scoreboard', () => {
-      const match = startMatch('AA', 'BB');
+      const match = scoreboard.startMatch('AA', 'BB');
       expect(scoreboard.has(match.id)).toEqual(true);
-      finishMatch(match.id);
+      scoreboard.finishMatch(match.id);
       expect(scoreboard.has(match.id)).toEqual(false);
     });
 
     it('should throw an error when try to finished match which is not in progress', () => {
       expect.assertions(1);
-      const match = startMatch('AA', 'BB');
-      finishMatch(match.id);
+      const match = scoreboard.startMatch('AA', 'BB');
+      scoreboard.finishMatch(match.id);
       try {
-        finishMatch(match.id);
+        scoreboard.finishMatch(match.id);
       } catch (err) {
         expect(err).toBeDefined();
       }
