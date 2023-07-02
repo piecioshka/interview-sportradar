@@ -8,12 +8,9 @@ class Scoreboard {
   startMatch(homeName, awayName) {
     this._checkAreTeamsPlayedNow(homeName, awayName);
     this._checkAreTheSameTeams(homeName, awayName);
-
     const match = Match.createMatch(homeName, awayName);
     match.state = 'in-progress';
-
     this._addToScoreboard(match, homeName, awayName);
-
     return match;
   }
 

@@ -1,7 +1,5 @@
 const { Match } = require('./match');
-const {
-  Scoreboard
-} = require('./scoreboard');
+const { Scoreboard } = require('./scoreboard');
 const { ScoreboardReport } = require('./scoreboard-report');
 
 describe('Report', () => {
@@ -67,17 +65,29 @@ describe('Report', () => {
   });
 
   it('should return a ordered list by total score and rest in order of starting', () => {
-    scoreboard.updateMatchScore(scoreboard.startMatch('Mexico', 'Canada').id, { home: 0, away: 5 });
-    scoreboard.updateMatchScore(scoreboard.startMatch('Spain', 'Brazil').id, { home: 10, away: 2 });
+    scoreboard.updateMatchScore(scoreboard.startMatch('Mexico', 'Canada').id, {
+      home: 0,
+      away: 5,
+    });
+    scoreboard.updateMatchScore(scoreboard.startMatch('Spain', 'Brazil').id, {
+      home: 10,
+      away: 2,
+    });
     scoreboard.updateMatchScore(scoreboard.startMatch('Germany', 'France').id, {
       home: 2,
       away: 2,
     });
-    scoreboard.updateMatchScore(scoreboard.startMatch('Uruguay', 'Italy').id, { home: 6, away: 6 });
-    scoreboard.updateMatchScore(scoreboard.startMatch('Argentina', 'Australia').id, {
-      home: 3,
-      away: 1,
+    scoreboard.updateMatchScore(scoreboard.startMatch('Uruguay', 'Italy').id, {
+      home: 6,
+      away: 6,
     });
+    scoreboard.updateMatchScore(
+      scoreboard.startMatch('Argentina', 'Australia').id,
+      {
+        home: 3,
+        away: 1,
+      },
+    );
 
     const report = new ScoreboardReport(scoreboard).generate();
 
