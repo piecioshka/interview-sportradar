@@ -1,4 +1,4 @@
-const uuid = require('uuid');
+const { Match } = require('./match');
 
 const scoreboard = new Map();
 // For performance reason
@@ -23,15 +23,6 @@ function checkAreTheSameTeams(homeName, awayName) {
   }
 }
 
-function createMatch(homeName, awayName) {
-  return {
-    id: uuid.v4(),
-    state: 'created',
-    home: { name: homeName, score: 0 },
-    away: { name: awayName, score: 0 },
-  };
-}
-
 function getTotalScore(match) {
   return match.home.score + match.away.score;
 }
@@ -40,7 +31,7 @@ function startMatch(homeName, awayName) {
   checkAreTeamsPlayedNow(homeName, awayName);
   checkAreTheSameTeams(homeName, awayName);
 
-  const match = createMatch(homeName, awayName);
+  const match = Match.createMatch(homeName, awayName);
   match.state = 'in-progress';
 
   scoreboard.set(match.id, match);
@@ -89,7 +80,6 @@ function getReport() {
 
 module.exports = {
   scoreboard,
-  createMatch,
   clearScoreboard,
   startMatch,
   updateMatchScore,

@@ -1,3 +1,4 @@
+const { Match } = require('./match');
 const {
   scoreboard,
   clearScoreboard,
@@ -5,7 +6,6 @@ const {
   updateMatchScore,
   finishMatch,
   getReport,
-  createMatch,
 } = require('./scoreboard');
 
 describe('Scoreboard', () => {
@@ -27,6 +27,7 @@ describe('Scoreboard', () => {
         home: { name: 'AA', score: 0 },
         away: { name: 'BB', score: 0 },
       });
+      expect(scoreboard.has(match.id)).toEqual(true);
     });
 
     it('should throw an error when we try to start a new match when one of teams is played now', () => {
@@ -124,7 +125,7 @@ describe('Scoreboard', () => {
       const report = getReport();
       expect(report).toEqual([
         {
-          ...createMatch('AA', 'BB'),
+          ...Match.createMatch('AA', 'BB'),
           id: expect.any(String),
           state: 'in-progress',
         },
@@ -137,12 +138,12 @@ describe('Scoreboard', () => {
       const report = getReport();
       expect(report).toEqual([
         {
-          ...createMatch('CC', 'DD'),
+          ...Match.createMatch('CC', 'DD'),
           id: expect.any(String),
           state: 'in-progress',
         },
         {
-          ...createMatch('AA', 'BB'),
+          ...Match.createMatch('AA', 'BB'),
           id: expect.any(String),
           state: 'in-progress',
         },
@@ -162,7 +163,7 @@ describe('Scoreboard', () => {
           away: { name: 'DD', score: 0 },
         },
         {
-          ...createMatch('AA', 'BB'),
+          ...Match.createMatch('AA', 'BB'),
           id: expect.any(String),
           state: 'in-progress',
         },
