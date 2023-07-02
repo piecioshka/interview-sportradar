@@ -27,7 +27,6 @@ function createMatch(homeName, awayName) {
   return {
     id: uuid.v4(),
     state: 'created',
-    startTime: Date.now(),
     home: { name: homeName, score: 0 },
     away: { name: awayName, score: 0 },
   };
@@ -81,13 +80,9 @@ function finishMatch(matchId) {
 }
 
 function getReport() {
-  const report = [...scoreboard.values()];
+  const report = [...scoreboard.values()].reverse();
   report.sort((matchA, matchB) => {
-    const totalComparator = getTotalScore(matchB) - getTotalScore(matchA);
-    if (totalComparator === 0) {
-      return matchA.startTime - matchB.startTime;
-    }
-    return totalComparator;
+    return getTotalScore(matchB) - getTotalScore(matchA);
   });
   return report;
 }

@@ -24,7 +24,6 @@ describe('Scoreboard', () => {
       expect(match).toEqual({
         id: expect.any(String),
         state: 'in-progress',
-        startTime: expect.any(Number),
         home: { name: 'AA', score: 0 },
         away: { name: 'BB', score: 0 },
       });
@@ -59,7 +58,6 @@ describe('Scoreboard', () => {
       expect(match).toEqual({
         id: expect.any(String),
         state: 'in-progress',
-        startTime: expect.any(Number),
         home: { name: 'AA', score: 2 },
         away: { name: 'BB', score: 1 },
       });
@@ -129,27 +127,24 @@ describe('Scoreboard', () => {
           ...createMatch('AA', 'BB'),
           id: expect.any(String),
           state: 'in-progress',
-          startTime: expect.any(Number),
         },
       ]);
     });
 
-    it('should return a list in order of started when score is the same', () => {
+    it('should return a list in reversed order of started when score is the same', () => {
       startMatch('AA', 'BB');
       startMatch('CC', 'DD');
       const report = getReport();
       expect(report).toEqual([
         {
-          ...createMatch('AA', 'BB'),
-          id: expect.any(String),
-          state: 'in-progress',
-          startTime: expect.any(Number),
-        },
-        {
           ...createMatch('CC', 'DD'),
           id: expect.any(String),
           state: 'in-progress',
-          startTime: expect.any(Number),
+        },
+        {
+          ...createMatch('AA', 'BB'),
+          id: expect.any(String),
+          state: 'in-progress',
         },
       ]);
     });
@@ -163,7 +158,6 @@ describe('Scoreboard', () => {
         {
           id: expect.any(String),
           state: 'in-progress',
-          startTime: expect.any(Number),
           home: { name: 'CC', score: 1 },
           away: { name: 'DD', score: 0 },
         },
@@ -171,7 +165,6 @@ describe('Scoreboard', () => {
           ...createMatch('AA', 'BB'),
           id: expect.any(String),
           state: 'in-progress',
-          startTime: expect.any(Number),
         },
       ]);
     });
@@ -191,41 +184,34 @@ describe('Scoreboard', () => {
 
       const report = getReport();
 
-      console.log(report);
-
       expect(report).toEqual([
         {
           id: expect.any(String),
           state: 'in-progress',
-          startTime: expect.any(Number),
           home: { name: 'Uruguay', score: 6 },
           away: { name: 'Italy', score: 6 },
         },
         {
           id: expect.any(String),
           state: 'in-progress',
-          startTime: expect.any(Number),
           home: { name: 'Spain', score: 10 },
           away: { name: 'Brazil', score: 2 },
         },
         {
           id: expect.any(String),
           state: 'in-progress',
-          startTime: expect.any(Number),
           home: { name: 'Mexico', score: 0 },
           away: { name: 'Canada', score: 5 },
         },
         {
           id: expect.any(String),
           state: 'in-progress',
-          startTime: expect.any(Number),
           home: { name: 'Argentina', score: 3 },
           away: { name: 'Australia', score: 1 },
         },
         {
           id: expect.any(String),
           state: 'in-progress',
-          startTime: expect.any(Number),
           home: { name: 'Germany', score: 2 },
           away: { name: 'France', score: 2 },
         },
