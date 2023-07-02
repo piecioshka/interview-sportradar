@@ -8,6 +8,7 @@
   - created - is created but not player
   - in-progress - playing now
   - completed - finishing a competition
+* Code: methods started with "_" are a private members
 
 ## Edge Cases
 

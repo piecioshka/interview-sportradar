@@ -21,7 +21,7 @@ describe('Scoreboard', () => {
         home: { name: 'AA', score: 0 },
         away: { name: 'BB', score: 0 },
       });
-      expect(scoreboard.has(match.id)).toEqual(true);
+      expect(scoreboard.hasMatch(match.id)).toEqual(true);
     });
 
     it('should throw an error when we try to start a new match when one of teams is played now', () => {
@@ -91,9 +91,9 @@ describe('Scoreboard', () => {
 
     it('should remove finished match the scoreboard', () => {
       const match = scoreboard.startMatch('AA', 'BB');
-      expect(scoreboard.has(match.id)).toEqual(true);
+      expect(scoreboard.hasMatch(match.id)).toEqual(true);
       scoreboard.finishMatch(match.id);
-      expect(scoreboard.has(match.id)).toEqual(false);
+      expect(scoreboard.hasMatch(match.id)).toEqual(false);
     });
 
     it('should throw an error when try to finished match which is not in progress', () => {
