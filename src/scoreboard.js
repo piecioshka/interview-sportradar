@@ -23,10 +23,6 @@ function checkAreTheSameTeams(homeName, awayName) {
   }
 }
 
-function getTotalScore(match) {
-  return match.home.score + match.away.score;
-}
-
 function startMatch(homeName, awayName) {
   checkAreTeamsPlayedNow(homeName, awayName);
   checkAreTheSameTeams(homeName, awayName);
@@ -70,19 +66,10 @@ function finishMatch(matchId) {
   return match;
 }
 
-function getReport() {
-  const report = [...scoreboard.values()].reverse();
-  report.sort((matchA, matchB) => {
-    return getTotalScore(matchB) - getTotalScore(matchA);
-  });
-  return report;
-}
-
 module.exports = {
   scoreboard,
   clearScoreboard,
   startMatch,
   updateMatchScore,
   finishMatch,
-  getReport,
 };
