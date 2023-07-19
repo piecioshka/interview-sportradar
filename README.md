@@ -31,3 +31,14 @@ npm run test
 # run unit tests and generate coverage
 npm run coverage
 ```
+
+## Bonus task
+
+Create the function that will return the number of goals for a passed team name.
+So we want to know how many goals did the team score in the current match if that team is playing a match currently.
+
+Assumptions:
+
+* we use only the team name
+* the name of team could be a lower or upper cased
+* only find matches which are in progress
